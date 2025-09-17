@@ -23,17 +23,17 @@ source /usr/share/yunohost/helpers
 #=================================================
 # STOP SYSTEMD SERVICE
 #=================================================
-ynh_script_progression "Stopping $app's systemd service..."
+# ynh_script_progression "Stopping $app's systemd service..."
 
-ynh_systemctl --service="$app" --action="stop"
+# ynh_systemctl --service="$app" --action="stop"
 
 #=================================================
 # ENSURE DOWNWARD COMPATIBILITY
 #=================================================
-ynh_script_progression "Ensuring downward compatibility..."
+# ynh_script_progression "Ensuring downward compatibility..."
 
-ynh_app_setting_set_default --key=php_upload_max_filesize --value=50M
-ynh_app_setting_set_default --key=php_post_max_size --value=50M
+# ynh_app_setting_set_default --key=php_upload_max_filesize --value=50M
+# ynh_app_setting_set_default --key=php_post_max_size --value=50M
 
 ### N.B. : the following setting migration snippets are provided as *EXAMPLES*
 ### of what you may want to do in some cases (e.g. a setting was not defined on
@@ -56,7 +56,7 @@ ynh_script_progression "Upgrading source files..."
 ### You can list with --keep every file/directory to *not* wipe or overwrite,
 ### useful for configuration files, data directories, or plugins.
 # Download, check integrity, uncompress and patch the source from manifest.toml
-ynh_setup_source --dest_dir="$install_dir" --full_replace --keep=".env data"
+ynh_setup_source --dest_dir="$install_dir" --full_replace
 
 ### $install_dir will automatically be initialized with some decent
 ### permissions by default... however, you may need to recursively reapply
@@ -66,20 +66,20 @@ chown -R "$app:www-data" "$install_dir"
 #=================================================
 # UPDATE A CONFIG FILE
 #=================================================
-ynh_script_progression "Updating $app's configuration files..."
+# ynh_script_progression "Updating $app's configuration files..."
 
 ### Same as during install
 ###
 ### The file will automatically be backed-up if it's found to be manually modified (because
 ### ynh_config_add keeps track of the file's checksum)
 
-ynh_config_add --template="some_config_file" --destination="$install_dir/some_config_file"
+# ynh_config_add --template="some_config_file" --destination="$install_dir/some_config_file"
 
 # FIXME: this should be handled by the core in the future
 ### You may need to use chmod 600 instead of 400,
 ### for example if the app is expected to be able to modify its own config
-chmod 400 "$install_dir/some_config_file"
-chown "$app:$app" "$install_dir/some_config_file"
+# chmod 400 "$install_dir/some_config_file"
+# chown "$app:$app" "$install_dir/some_config_file"
 
 ### For more complex cases where you want to replace stuff using regexes,
 ### you shoud rely on ynh_replace (which is basically a wrapper for sed)
@@ -95,24 +95,24 @@ ynh_script_progression "Upgrading system configurations related to $app..."
 
 ### This should be a literal copypaste of what happened in the install's "System configuration" section
 
-ynh_config_add_phpfpm
+# ynh_config_add_phpfpm
 
 ynh_config_add_nginx
 
-ynh_config_add_systemd
+# ynh_config_add_systemd
 
 yunohost service add "$app" --description="A short description of the app" --log="/var/log/$app/$app.log"
 
 ynh_config_add_logrotate
 
-ynh_config_add_fail2ban --logpath="/var/log/nginx/${domain}-error.log" --failregex="Regex to match into the log for a failed login"
+# ynh_config_add_fail2ban --logpath="/var/log/nginx/${domain}-error.log" --failregex="Regex to match into the log for a failed login"
 
 #=================================================
 # START SYSTEMD SERVICE
 #=================================================
-ynh_script_progression "Starting $app's systemd service..."
+# ynh_script_progression "Starting $app's systemd service..."
 
-ynh_systemctl --service="$app" --action="start"
+# ynh_systemctl --service="$app" --action="start"
 
 #=================================================
 # END OF SCRIPT
